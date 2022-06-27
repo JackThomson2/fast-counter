@@ -7,7 +7,7 @@ pub struct ConcurrentCounter {
     cells: Vec<AtomicIsize>,
 }
 
-static THREAD_COUNTER: AtomicUsize = AtomicUsize::new(0);
+static THREAD_COUNTER: AtomicUsize = AtomicUsize::new(1);
 
 #[thread_local]
 static mut THREAD_ID: usize = 0;
