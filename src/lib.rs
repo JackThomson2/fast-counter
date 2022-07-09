@@ -14,6 +14,7 @@ static mut THREAD_ID: usize = 0;
 
 impl ConcurrentCounter {
     pub fn new(count: usize) -> Self {
+        let count = count.next_power_of_two();
         Self {
             cells: (0..count)
                 .into_iter()
@@ -25,7 +26,7 @@ impl ConcurrentCounter {
     fn thread_id(&self) -> usize {
         unsafe {
             if THREAD_ID == 0 {
-                THREAD_ID = THREAD_COUNTER.fetch_add(1, Ordering::Relaxed)
+                THREAD_ID = THREAD_COUNTER.fetch_add(1, Ordering::SeqCst)
             }
             THREAD_ID
         }
@@ -36,11 +37,11 @@ impl ConcurrentCounter {
             self.cells
                 .get_unchecked(self.thread_id() & (self.cells.len() - 1))
         };
-        c.fetch_add(value, Ordering::SeqCst);
+        c.fetch_add(value, Ordering::Relaxed);
     }
 
     pub fn sum(&self) -> isize {
-        self.cells.iter().map(|c| c.load(Ordering::Acquire)).sum()
+        self.cells.iter().map(|c| c.load(Ordering::Relaxed)).sum()
     }
 }
 
