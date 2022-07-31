@@ -37,7 +37,7 @@ fn atomic_counter(c: &mut Criterion) {
     group.finish();
 }
 
-use fastcounter::ConcurrentCounter as JackCounter;
+use fast_counter::ConcurrentCounter as JackCounter;
 
 fn jack_counter(c: &mut Criterion) {
     let mut group = c.benchmark_group("fast_counter");
@@ -66,7 +66,7 @@ fn jack_counter(c: &mut Criterion) {
     }
 }
 
-use fastcounter::default::ConcurrentCounter as ConcurrentCounterTLMacro;
+use fast_counter::default::ConcurrentCounter as ConcurrentCounterTLMacro;
 
 fn jack_counter_thread_local(c: &mut Criterion) {
     let mut group = c.benchmark_group("fast_counter thread local macro");
