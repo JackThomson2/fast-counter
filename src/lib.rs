@@ -1,4 +1,4 @@
-#![feature(thread_local)]
+#![cfg_attr(feature = "nightly", feature(thread_local))]
 
 pub mod default;
 
