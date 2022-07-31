@@ -6,7 +6,7 @@ use rayon::prelude::*;
 use std::sync::atomic::{AtomicIsize, Ordering};
 
 const ITER: isize = 32 * 1024;
-const CORES_TO_USE: [usize; 2] = [2, 4];
+const CORES_TO_USE: [usize; 4] = [2, 4, 8, 16];
 
 fn atomic_counter(c: &mut Criterion) {
     let mut group = c.benchmark_group("atomic_counter");
@@ -40,7 +40,7 @@ fn atomic_counter(c: &mut Criterion) {
 use fastcounter::ConcurrentCounter as JackCounter;
 
 fn jack_counter(c: &mut Criterion) {
-    let mut group = c.benchmark_group("jack_counter");
+    let mut group = c.benchmark_group("fast_counter");
     group.throughput(Throughput::Elements(ITER as u64));
 
     for threads in CORES_TO_USE {
@@ -69,7 +69,7 @@ fn jack_counter(c: &mut Criterion) {
 use fastcounter::default::ConcurrentCounter as ConcurrentCounterTLMacro;
 
 fn jack_counter_thread_local(c: &mut Criterion) {
-    let mut group = c.benchmark_group("jack_counter thread local macro");
+    let mut group = c.benchmark_group("fast_counter thread local macro");
     group.throughput(Throughput::Elements(ITER as u64));
 
     for threads in CORES_TO_USE {
