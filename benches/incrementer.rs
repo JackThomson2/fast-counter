@@ -39,8 +39,8 @@ fn atomic_counter(c: &mut Criterion) {
 
 use fast_counter::ConcurrentCounter as JackCounter;
 
-fn jack_counter(c: &mut Criterion) {
-    let mut group = c.benchmark_group("fast_counter");
+fn fast_counter(c: &mut Criterion) {
+    let mut group = c.benchmark_group("fast_counter_nightly");
     group.throughput(Throughput::Elements(ITER as u64));
 
     for threads in CORES_TO_USE {
@@ -68,8 +68,8 @@ fn jack_counter(c: &mut Criterion) {
 
 use fast_counter::default::ConcurrentCounter as ConcurrentCounterTLMacro;
 
-fn jack_counter_thread_local(c: &mut Criterion) {
-    let mut group = c.benchmark_group("fast_counter thread local macro");
+fn fast_counter_stable(c: &mut Criterion) {
+    let mut group = c.benchmark_group("fast_counter_stable");
     group.throughput(Throughput::Elements(ITER as u64));
 
     for threads in CORES_TO_USE {
@@ -99,7 +99,7 @@ fn jack_counter_thread_local(c: &mut Criterion) {
 criterion_group!(
     benches,
     atomic_counter,
-    jack_counter,
-    jack_counter_thread_local,
+    fast_counter,
+    fast_counter_stable,
 );
 criterion_main!(benches);

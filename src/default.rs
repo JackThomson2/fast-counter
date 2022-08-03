@@ -12,6 +12,7 @@ thread_local! {
 }
 
 impl ConcurrentCounter {
+    #[inline]
     pub fn new(count: usize) -> Self {
         let count = count.next_power_of_two();
         Self {
@@ -22,10 +23,12 @@ impl ConcurrentCounter {
         }
     }
 
+    #[inline]
     pub fn reset_counter(&self) {
         THREAD_COUNTER.store(1, Ordering::SeqCst)
     }
     
+    #[inline]
     fn thread_id(&self) -> usize {
         unsafe { THREAD_ID.with(|id| {
             let mut val = *id.get();
@@ -37,6 +40,7 @@ impl ConcurrentCounter {
         }) }
     }
 
+    #[inline]
     pub fn add(&self, value: isize) {
         let c = unsafe {
             self.cells
@@ -45,6 +49,7 @@ impl ConcurrentCounter {
         c.fetch_add(value, Ordering::Relaxed);
     }
 
+    #[inline]
     pub fn sum(&self) -> isize {
         self.cells.iter().map(|c| c.load(Ordering::Relaxed)).sum()
     }

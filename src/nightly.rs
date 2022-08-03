@@ -10,6 +10,7 @@ static THREAD_COUNTER: AtomicUsize = AtomicUsize::new(1);
 static mut THREAD_ID: usize = 0;
 
 impl ConcurrentCounter {
+    #[inline]
     pub fn new(count: usize) -> Self {
         let count = count.next_power_of_two();
         Self {
@@ -20,6 +21,7 @@ impl ConcurrentCounter {
         }
     }
 
+    #[inline]
     fn thread_id(&self) -> usize {
         unsafe {
             if THREAD_ID == 0 {
@@ -29,6 +31,7 @@ impl ConcurrentCounter {
         }
     }
 
+    #[inline]
     pub fn add(&self, value: isize) {
         let c = unsafe {
             self.cells
@@ -37,6 +40,7 @@ impl ConcurrentCounter {
         c.fetch_add(value, Ordering::Relaxed);
     }
 
+    #[inline]
     pub fn sum(&self) -> isize {
         self.cells.iter().map(|c| c.load(Ordering::Relaxed)).sum()
     }
