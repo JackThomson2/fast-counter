@@ -24,3 +24,9 @@ nightly = []
 [[bench]]
 name = "incrementer" 
 harness = false
+
+[profile.release]
+panic = "abort"
+opt-level = 3
+codegen-units = 1
+lto = "fat"

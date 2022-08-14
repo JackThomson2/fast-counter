@@ -19,31 +19,31 @@ atomic_counter/16       time:   [410.49 us 411.71 us 412.99 us]
 
 ------------------------------------------------------------------------------
 
-fast_counter_nightly/2  time:   [314.05 us 315.63 us 317.16 us]
-                        thrpt:  [103.32 Melem/s 103.82 Melem/s 104.34 Melem/s]
+fast_counter_nightly/2  time:   [264.99 us 267.24 us 269.14 us]
+                        thrpt:  [121.75 Melem/s 122.61 Melem/s 123.66 Melem/s]
 
-fast_counter_nightly/4  time:   [292.82 us 294.93 us 296.72 us]
-                        thrpt:  [110.44 Melem/s 111.10 Melem/s 111.91 Melem/s]
+fast_counter_nightly/4  time:   [252.67 us 255.30 us 257.85 us]
+                        thrpt:  [127.08 Melem/s 128.35 Melem/s 129.68 Melem/s]
 
-fast_counter_nightly/8  time:   [209.61 us 215.30 us 221.28 us]
-                        thrpt:  [148.08 Melem/s 152.20 Melem/s 156.33 Melem/s]
+fast_counter_nightly/8  time:   [193.19 us 197.00 us 200.92 us]
+                        thrpt:  [163.09 Melem/s 166.34 Melem/s 169.62 Melem/s]
 
-fast_counter_nightly/16 time:   [157.28 us 160.06 us 163.00 us]
-                        thrpt:  [201.04 Melem/s 204.72 Melem/s 208.34 Melem/s]
+fast_counter_nightly/16 time:   [154.45 us 159.36 us 164.75 us]
+                        thrpt:  [198.90 Melem/s 205.63 Melem/s 212.16 Melem/s]
 
 ------------------------------------------------------------------------------
 
-fast_counter_stable/2   time:   [400.89 us 407.77 us 413.33 us]
-                        thrpt:  [79.277 Melem/s 80.360 Melem/s 81.739 Melem/s]
+fast_counter_stable/2   time:   [299.28 us 300.40 us 301.52 us]
+                        thrpt:  [108.68 Melem/s 109.08 Melem/s 109.49 Melem/s]
 
-fast_counter_stable/4   time:   [369.10 us 372.90 us 376.90 us]
-                        thrpt:  [86.942 Melem/s 87.873 Melem/s 88.778 Melem/s]
+fast_counter_stable/4   time:   [276.78 us 278.90 us 281.02 us]
+                        thrpt:  [116.61 Melem/s 117.49 Melem/s 118.39 Melem/s]
 
-fast_counter_stable/8   time:   [247.36 us 253.10 us 258.51 us]
-                        thrpt:  [126.76 Melem/s 129.47 Melem/s 132.47 Melem/s]
+fast_counter_stable/8   time:   [194.94 us 199.44 us 204.17 us]
+                        thrpt:  [160.49 Melem/s 164.30 Melem/s 168.10 Melem/s]
 
-fast_counter_stable/16  time:   [162.17 us 166.01 us 170.13 us]
-                        thrpt:  [192.60 Melem/s 197.39 Melem/s 202.06 Melem/s]
+fast_counter_stable/16  time:   [152.30 us 155.98 us 159.92 us]
+                        thrpt:  [204.91 Melem/s 210.08 Melem/s 215.16 Melem/s]
 ```
 
 Big shoutout to @jimvdl who put the core starting point for this together
