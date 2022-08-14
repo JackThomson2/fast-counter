@@ -1,6 +1,8 @@
 use std::sync::atomic::{AtomicIsize, AtomicUsize, Ordering};
 use std::cell::UnsafeCell;
 
+use crate::safe_getters::SafeGetters;
+
 pub struct ConcurrentCounter {
     cells: Vec<AtomicIsize>,
 }
@@ -27,25 +29,21 @@ impl ConcurrentCounter {
     pub fn reset_counter(&self) {
         THREAD_COUNTER.store(1, Ordering::SeqCst)
     }
-    
+
     #[inline]
     fn thread_id(&self) -> usize {
         unsafe { THREAD_ID.with(|id| {
-            let mut val = *id.get();
-            if val == 0 {
-                val = THREAD_COUNTER.fetch_add(1, Ordering::SeqCst);
-                *id.get().as_mut().unwrap_unchecked() = val;
+            let val = debug_unwrap!(id.get().as_mut());
+            if *val == 0 {
+                *val = THREAD_COUNTER.fetch_add(1, Ordering::SeqCst);
             }
-            val
+            *val
         }) }
     }
 
     #[inline]
     pub fn add(&self, value: isize) {
-        let c = unsafe {
-            self.cells
-                .get_unchecked(self.thread_id() & (self.cells.len() - 1))
-        };
+        let c = self.cells.safely_get(self.thread_id() & (self.cells.len() - 1));
         c.fetch_add(value, Ordering::Relaxed);
     }
 
@@ -57,8 +55,6 @@ impl ConcurrentCounter {
 
 #[cfg(test)]
 mod tests {
-    use std::sync::{Arc, atomic::Ordering};
-
     use crate::default::ConcurrentCounter;
 
     #[test]
@@ -80,20 +76,16 @@ mod tests {
     #[test]
     fn two_threads_incrementing_concurrently() {
         // Spin up two threads that increment the counter concurrently
-        let counter = Arc::new(ConcurrentCounter::new(2));
+        let counter = ConcurrentCounter::new(2);
 
-        let mut threads = Vec::new();
+        std::thread::scope(|s| {
+            for _ in 0..2 {
+                s.spawn(|| {
+                    counter.add(1);
+                });
+            }
+        });
 
-        for _ in 0..2 {
-            let counter = counter.clone();
-            threads.push(std::thread::spawn(move || {
-                counter.add(1);
-            }));
-        }
-
-        for i in threads {
-            i.join().unwrap();
-        }
 
         assert_eq!(counter.sum(), 2);
     }
@@ -102,22 +94,18 @@ mod tests {
     fn two_threads_incrementing_multiple_times_concurrently() {
         const WRITE_COUNT: isize = 100_000;
         // Spin up two threads that increment the counter concurrently
-        let counter = Arc::new(ConcurrentCounter::new(2));
+        let counter = ConcurrentCounter::new(2);
 
-        let mut threads = Vec::new();
+        std::thread::scope(|s| {
+            for _ in 0..2 {
+                s.spawn(|| {
+                    for _ in 0..WRITE_COUNT {
+                        counter.add(1);
+                    }
+                });
+            }
+        });
 
-        for _ in 0..2 {
-            let counter = counter.clone();
-            threads.push(std::thread::spawn(move || {
-                for _ in 0..WRITE_COUNT {
-                    counter.add(1);
-                }
-            }));
-        }
-
-        for i in threads {
-            i.join().unwrap();
-        }
 
         assert_eq!(counter.sum(), 2 * WRITE_COUNT);
     }
@@ -125,57 +113,21 @@ mod tests {
     #[test]
     fn multple_threads_incrementing_multiple_times_concurrently() {
         const WRITE_COUNT: isize = 1_000_000;
-        const THREAD_COUNT: isize = 20;
+        const THREAD_COUNT: isize = 8;
         // Spin up two threads that increment the counter concurrently
-        let counter = Arc::new(ConcurrentCounter::new(THREAD_COUNT as usize));
+        let counter = ConcurrentCounter::new(THREAD_COUNT as usize);
 
-        let mut threads = Vec::with_capacity(THREAD_COUNT as usize);
+        std::thread::scope(|s| {
+            for _ in 0..THREAD_COUNT {
+                s.spawn(|| {
+                    for _ in 0..WRITE_COUNT {
+                        counter.add(1);
+                    }
+                });
+            }
+        });
 
-        for _ in 0..THREAD_COUNT {
-            let counter = counter.clone();
-            threads.push(std::thread::spawn(move || {
-                for _ in 0..WRITE_COUNT {
-                    counter.add(1);
-                }
-            }));
-        }
-
-        for i in threads {
-            i.join().unwrap();
-        }
 
         assert_eq!(counter.sum(), THREAD_COUNT * WRITE_COUNT);
-    }
-
-    #[test]
-    fn checking_good_distribution() {
-        const WRITE_COUNT: isize = 1_000_000;
-        const THREAD_COUNT: isize = 16;
-        // Spin up two threads that increment the counter concurrently
-        let counter = Arc::new(ConcurrentCounter::new(THREAD_COUNT as usize));
-        counter.reset_counter();
-
-        let mut threads = Vec::with_capacity(THREAD_COUNT as usize);
-
-        for _ in 0..THREAD_COUNT {
-            let counter = counter.clone();
-            threads.push(std::thread::spawn(move || {
-                for _ in 0..WRITE_COUNT {
-                    counter.add(1);
-                }
-            }));
-        }
-
-        for i in threads {
-            i.join().unwrap();
-        }
-
-        assert_eq!(counter.sum(), THREAD_COUNT * WRITE_COUNT);
-
-        println!("{:?}", counter.cells);
-
-        for cell in counter.cells.iter() {
-            assert_eq!(cell.load(Ordering::Relaxed), WRITE_COUNT);
-        }
     }
 }
