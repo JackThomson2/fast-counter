@@ -84,7 +84,6 @@ fn fast_counter_stable(c: &mut Criterion) {
                 pool.install(|| {
                     b.iter(|| {
                         let counter = ConcurrentCounterTLMacro::new(threads);
-                        counter.reset_counter();
                         (0..ITER).into_par_iter().for_each(|_| {
                             counter.add(1);
                         });

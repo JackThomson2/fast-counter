@@ -24,11 +24,6 @@ impl ConcurrentCounter {
     }
 
     #[inline]
-    pub fn reset_counter(&self) {
-        THREAD_COUNTER.store(1, Ordering::SeqCst)
-    }
-
-    #[inline]
     fn thread_id(&self) -> usize {
         unsafe {
             if THREAD_ID == 0 {

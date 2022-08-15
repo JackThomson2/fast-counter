@@ -26,11 +26,6 @@ impl ConcurrentCounter {
     }
 
     #[inline]
-    pub fn reset_counter(&self) {
-        THREAD_COUNTER.store(1, Ordering::SeqCst)
-    }
-
-    #[inline]
     fn thread_id(&self) -> usize {
         unsafe { THREAD_ID.with(|id| {
             let val = debug_unwrap!(id.get().as_mut());
