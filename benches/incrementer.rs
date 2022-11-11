@@ -1,5 +1,3 @@
-#![feature(thread_local)]
-
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use rayon;
 use rayon::prelude::*;
@@ -37,36 +35,7 @@ fn atomic_counter(c: &mut Criterion) {
     group.finish();
 }
 
-use fast_counter::ConcurrentCounter as JackCounter;
-
-fn fast_counter(c: &mut Criterion) {
-    let mut group = c.benchmark_group("fast_counter_nightly");
-    group.throughput(Throughput::Elements(ITER as u64));
-
-    for threads in CORES_TO_USE {
-        group.bench_with_input(
-            BenchmarkId::from_parameter(threads),
-            &threads,
-            |b, &threads| {
-                let pool = rayon::ThreadPoolBuilder::new()
-                    .num_threads(threads)
-                    .build()
-                    .unwrap();
-                pool.install(|| {
-                    b.iter(|| {
-                        let counter = JackCounter::new(threads);
-                        (0..ITER).into_par_iter().for_each(|_| {
-                            counter.add(1);
-                        });
-                        assert_eq!(ITER, counter.sum());
-                    })
-                });
-            },
-        );
-    }
-}
-
-use fast_counter::default::ConcurrentCounter as ConcurrentCounterTLMacro;
+use fast_counter::ConcurrentCounter as ConcurrentCounterTLMacro;
 
 fn fast_counter_stable(c: &mut Criterion) {
     let mut group = c.benchmark_group("fast_counter_stable");
@@ -98,7 +67,6 @@ fn fast_counter_stable(c: &mut Criterion) {
 criterion_group!(
     benches,
     atomic_counter,
-    fast_counter,
     fast_counter_stable,
 );
 criterion_main!(benches);

@@ -1,4 +1,5 @@
 use std::sync::atomic::{AtomicIsize, AtomicUsize, Ordering};
+use std::cell::UnsafeCell;
 
 use crate::safe_getters::SafeGetters;
 
@@ -8,8 +9,9 @@ pub struct ConcurrentCounter {
 
 static THREAD_COUNTER: AtomicUsize = AtomicUsize::new(1);
 
-#[thread_local]
-static mut THREAD_ID: usize = 0;
+thread_local! {
+    static THREAD_ID: UnsafeCell<usize> = UnsafeCell::new(0);
+}
 
 impl ConcurrentCounter {
     #[inline]
@@ -25,12 +27,13 @@ impl ConcurrentCounter {
 
     #[inline]
     fn thread_id(&self) -> usize {
-        unsafe {
-            if THREAD_ID == 0 {
-                THREAD_ID = THREAD_COUNTER.fetch_add(1, Ordering::SeqCst)
+        unsafe { THREAD_ID.with(|id| {
+            let val = debug_unwrap!(id.get().as_mut());
+            if *val == 0 {
+                *val = THREAD_COUNTER.fetch_add(1, Ordering::SeqCst);
             }
-            THREAD_ID
-        }
+            *val
+        }) }
     }
 
     #[inline]
@@ -105,7 +108,7 @@ mod tests {
     #[test]
     fn multple_threads_incrementing_multiple_times_concurrently() {
         const WRITE_COUNT: isize = 1_000_000;
-        const THREAD_COUNT: isize = 20;
+        const THREAD_COUNT: isize = 8;
         // Spin up two threads that increment the counter concurrently
         let counter = ConcurrentCounter::new(THREAD_COUNT as usize);
 
@@ -118,6 +121,7 @@ mod tests {
                 });
             }
         });
+
 
         assert_eq!(counter.sum(), THREAD_COUNT * WRITE_COUNT);
     }
