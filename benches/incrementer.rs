@@ -4,7 +4,7 @@ use rayon::prelude::*;
 use std::sync::atomic::{AtomicIsize, Ordering};
 
 const ITER: isize = 32 * 1024;
-const CORES_TO_USE: [usize; 4] = [2, 4, 8, 16];
+const CORES_TO_USE: [usize; 5] = [1, 2, 4, 8, 16];
 
 fn atomic_counter(c: &mut Criterion) {
     let mut group = c.benchmark_group("atomic_counter");

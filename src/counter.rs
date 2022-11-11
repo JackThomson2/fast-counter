@@ -1,16 +1,23 @@
 use std::sync::atomic::{AtomicIsize, AtomicUsize, Ordering};
 use std::cell::Cell;
 
+use crate::utils::CachePadded;
 use crate::safe_getters::SafeGetters;
 
 pub struct ConcurrentCounter {
-    cells: Vec<AtomicIsize>,
+    cells: Vec<CachePadded::<AtomicIsize>>,
 }
 
 static THREAD_COUNTER: AtomicUsize = AtomicUsize::new(1);
 
 thread_local! {
     static THREAD_ID: Cell<usize> = Cell::new(THREAD_COUNTER.fetch_add(1, Ordering::SeqCst));
+}
+
+fn make_new_padded_counter() -> CachePadded::<AtomicIsize> {
+    CachePadded {
+        value: AtomicIsize::new(0)
+    }
 }
 
 impl ConcurrentCounter {
@@ -20,7 +27,7 @@ impl ConcurrentCounter {
         Self {
             cells: (0..count)
                 .into_iter()
-                .map(|_| AtomicIsize::new(0))
+                .map(|_| make_new_padded_counter())
                 .collect(),
         }
     }
@@ -35,12 +42,12 @@ impl ConcurrentCounter {
     #[inline]
     pub fn add(&self, value: isize) {
         let c = self.cells.safely_get(self.thread_id() & (self.cells.len() - 1));
-        c.fetch_add(value, Ordering::Relaxed);
+        c.value.fetch_add(value, Ordering::Relaxed);
     }
 
     #[inline]
     pub fn sum(&self) -> isize {
-        self.cells.iter().map(|c| c.load(Ordering::Relaxed)).sum()
+        self.cells.iter().map(|c| c.value.load(Ordering::Relaxed)).sum()
     }
 }
 
