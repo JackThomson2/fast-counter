@@ -1,5 +1,5 @@
 use std::sync::atomic::{AtomicIsize, AtomicUsize, Ordering};
-use std::cell::UnsafeCell;
+use std::cell::Cell;
 
 use crate::safe_getters::SafeGetters;
 
@@ -10,7 +10,7 @@ pub struct ConcurrentCounter {
 static THREAD_COUNTER: AtomicUsize = AtomicUsize::new(1);
 
 thread_local! {
-    static THREAD_ID: UnsafeCell<usize> = UnsafeCell::new(0);
+    static THREAD_ID: Cell<usize> = Cell::new(0);
 }
 
 impl ConcurrentCounter {
@@ -27,13 +27,17 @@ impl ConcurrentCounter {
 
     #[inline]
     fn thread_id(&self) -> usize {
-        unsafe { THREAD_ID.with(|id| {
-            let val = debug_unwrap!(id.get().as_mut());
-            if *val == 0 {
-                *val = THREAD_COUNTER.fetch_add(1, Ordering::SeqCst);
+        THREAD_ID.with(|id| {
+            match id.get() {
+                0 => {
+                    let new_id = THREAD_COUNTER.fetch_add(1, Ordering::SeqCst);
+                    id.set(new_id);
+
+                    new_id
+                },
+                i => i
             }
-            *val
-        }) }
+        })
     }
 
     #[inline]
