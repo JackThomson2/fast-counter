@@ -14,10 +14,6 @@ repository = "https://github.com/JackThomson2/fast-counter"
 rayon = "1.3"
 criterion = "0.3"
 
-[features]
-default = []
-nightly = []
-
 [[bench]]
 name = "incrementer" 
 harness = false

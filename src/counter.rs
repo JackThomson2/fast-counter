@@ -10,7 +10,7 @@ pub struct ConcurrentCounter {
 static THREAD_COUNTER: AtomicUsize = AtomicUsize::new(1);
 
 thread_local! {
-    static THREAD_ID: Cell<usize> = Cell::new(0);
+    static THREAD_ID: Cell<usize> = Cell::new(THREAD_COUNTER.fetch_add(1, Ordering::SeqCst));
 }
 
 impl ConcurrentCounter {
@@ -28,15 +28,7 @@ impl ConcurrentCounter {
     #[inline]
     fn thread_id(&self) -> usize {
         THREAD_ID.with(|id| {
-            match id.get() {
-                0 => {
-                    let new_id = THREAD_COUNTER.fetch_add(1, Ordering::SeqCst);
-                    id.set(new_id);
-
-                    new_id
-                },
-                i => i
-            }
+            id.get()
         })
     }
 
