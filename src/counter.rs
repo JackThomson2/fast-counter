@@ -50,8 +50,18 @@ impl ConcurrentCounter {
     pub fn sum(&self) -> isize {
         unsafe { hand_unroll_sum(&self.cells) }
     }
+
+    #[inline]
+    pub unsafe fn quick_sum(&self) -> isize {
+        unsafe_sum(&self.cells)
+    }
 }
 
+fn unsafe_sum(data: &Vec<CachePadded<AtomicIsize>>) -> isize {
+    let data = unsafe { std::mem::transmute::<&Vec<CachePadded<AtomicIsize>>, &Vec<CachePadded<isize>>>(data) };
+
+    data.iter().map(|c| c.value).sum()
+}
 
 unsafe fn hand_unroll_sum(data: &Vec<CachePadded<AtomicIsize>>) -> isize {
     let mut result = 0;
