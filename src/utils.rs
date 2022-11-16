@@ -1,3 +1,5 @@
+use std::sync::atomic::AtomicIsize;
+
 /// Pads and aligns a value to the length of a cache line.
 /// Code borrowed from https://github.com/ibraheemdev/seize/blob/master/src/utils.rs
 #[cfg_attr(
@@ -34,3 +36,10 @@
 pub struct CachePadded<T> {
     pub value: T,
 }
+
+pub fn make_new_padded_counter() -> CachePadded::<AtomicIsize> {
+    CachePadded {
+        value: AtomicIsize::new(0)
+    }
+}
+
