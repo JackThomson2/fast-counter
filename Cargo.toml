@@ -12,10 +12,10 @@ repository = "https://github.com/JackThomson2/fast-counter"
 
 [dev-dependencies]
 rayon = "1.3"
-criterion = "0.3"
+criterion = { version = "0.3", features = ["html_reports"] }
 
 [[bench]]
-name = "incrementer" 
+name = "main" 
 harness = false
 
 [profile.release]

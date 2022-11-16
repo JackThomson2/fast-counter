@@ -1,8 +1,9 @@
 use std::sync::atomic::{AtomicIsize, AtomicUsize, Ordering};
 use std::cell::Cell;
 
-use crate::utils::CachePadded;
 use crate::safe_getters::SafeGetters;
+
+pub use crate::utils::CachePadded;
 
 pub struct ConcurrentCounter {
     cells: Vec<CachePadded::<AtomicIsize>>,
@@ -14,7 +15,7 @@ thread_local! {
     static THREAD_ID: Cell<usize> = Cell::new(THREAD_COUNTER.fetch_add(1, Ordering::SeqCst));
 }
 
-fn make_new_padded_counter() -> CachePadded::<AtomicIsize> {
+pub fn make_new_padded_counter() -> CachePadded::<AtomicIsize> {
     CachePadded {
         value: AtomicIsize::new(0)
     }
