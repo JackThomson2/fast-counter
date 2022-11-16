@@ -41,13 +41,23 @@ impl ConcurrentCounter {
 
     #[inline]
     pub fn add(&self, value: isize) {
+        self.add_with_ordering(value, Ordering::Relaxed)
+    }
+
+    #[inline]
+    pub fn add_with_ordering(&self, value: isize, ordering: Ordering) {
         let c = self.cells.safely_get(self.thread_id() & (self.cells.len() - 1));
-        c.value.fetch_add(value, Ordering::Relaxed);
+        c.value.fetch_add(value, ordering);
     }
 
     #[inline]
     pub fn sum(&self) -> isize {
-        self.cells.iter().map(|c| c.value.load(Ordering::Relaxed)).sum()
+        self.sum_with_ordering(Ordering::Relaxed)
+    }
+
+    #[inline]
+    pub fn sum_with_ordering(&self, ordering: Ordering) -> isize {
+        self.cells.iter().map(|c| c.value.load(ordering)).sum()
     }
 }
 
