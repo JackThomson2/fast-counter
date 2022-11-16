@@ -48,8 +48,49 @@ impl ConcurrentCounter {
 
     #[inline]
     pub fn sum(&self) -> isize {
-        self.cells.iter().map(|c| c.value.load(Ordering::Relaxed)).sum()
+        unsafe { hand_unroll_sum(&self.cells) }
     }
+}
+
+
+unsafe fn hand_unroll_sum(data: &Vec<CachePadded<AtomicIsize>>) -> isize {
+    let mut result = 0;
+    let mut i = 0;
+
+    if i + 8 <= data.len() {
+        loop {
+            result += data.get_unchecked(i).value.load(Ordering::Relaxed);
+            result += data.get_unchecked(i + 1).value.load(Ordering::Relaxed);
+            result += data.get_unchecked(i + 2).value.load(Ordering::Relaxed);
+            result += data.get_unchecked(i + 3).value.load(Ordering::Relaxed);
+            result += data.get_unchecked(i + 4).value.load(Ordering::Relaxed);
+            result += data.get_unchecked(i + 5).value.load(Ordering::Relaxed);
+            result += data.get_unchecked(i + 6).value.load(Ordering::Relaxed);
+            result += data.get_unchecked(i + 7).value.load(Ordering::Relaxed);
+
+            i += 8;
+
+            if i + 7 >= data.len() {
+                return result;
+            }
+        }
+    } 
+
+    if i + 4 <= data.len() {
+        result += data.get_unchecked(i).value.load(Ordering::Relaxed);
+        result += data.get_unchecked(i + 1).value.load(Ordering::Relaxed);
+        result += data.get_unchecked(i + 2).value.load(Ordering::Relaxed);
+        result += data.get_unchecked(i + 3).value.load(Ordering::Relaxed);
+
+        return result;
+    } 
+
+    while i < data.len() {
+        result += data.get_unchecked(i).value.load(Ordering::Relaxed);
+        i += 1;
+    }
+
+    result
 }
 
 #[cfg(test)]
