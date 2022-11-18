@@ -5,31 +5,37 @@ This is a simple shareded concurrent counter which can be used in higher content
 This approach appears to scale well to a higher number of cores as shown here compared to a single atomic number which is being updated:
 
 ```
-atomic_counter/2        time:   [290.27 us 293.65 us 297.26 us]
-                        thrpt:  [110.23 Melem/s 111.59 Melem/s 112.89 Melem/s]
+atomic_counter/1        time:   [1.5215 ms 1.5311 ms 1.5414 ms]
+                        thrpt:  [680.28 Melem/s 684.86 Melem/s 689.19 Melem/s]
 
-atomic_counter/4        time:   [320.62 us 323.01 us 325.27 us]
-                        thrpt:  [100.74 Melem/s 101.45 Melem/s 102.20 Melem/s]
+atomic_counter/2        time:   [8.1665 ms 8.3089 ms 8.4518 ms]
+                        thrpt:  [124.07 Melem/s 126.20 Melem/s 128.40 Melem/s]
 
-atomic_counter/8        time:   [343.33 us 344.14 us 344.98 us]
-                        thrpt:  [94.985 Melem/s 95.217 Melem/s 95.442 Melem/s]
+atomic_counter/4        time:   [10.192 ms 10.250 ms 10.303 ms]
+                        thrpt:  [101.77 Melem/s 102.30 Melem/s 102.88 Melem/s]
 
-atomic_counter/16       time:   [410.49 us 411.71 us 412.99 us]
-                        thrpt:  [79.344 Melem/s 79.590 Melem/s 79.827 Melem/s]
+atomic_counter/8        time:   [10.021 ms 10.131 ms 10.234 ms]
+                        thrpt:  [102.46 Melem/s 103.50 Melem/s 104.64 Melem/s]
 
-------------------------------------------------------------------------------
+atomic_counter/16       time:   [12.362 ms 12.393 ms 12.425 ms]
+                        thrpt:  [84.390 Melem/s 84.610 Melem/s 84.823 Melem/s]
 
-fast_counter/2   time:   [299.28 us 300.40 us 301.52 us]
-                        thrpt:  [108.68 Melem/s 109.08 Melem/s 109.49 Melem/s]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-fast_counter/4   time:   [276.78 us 278.90 us 281.02 us]
-                        thrpt:  [116.61 Melem/s 117.49 Melem/s 118.39 Melem/s]
+fast_counter_stable/1   time:   [1.5678 ms 1.5795 ms 1.5913 ms]
+                        thrpt:  [658.92 Melem/s 663.88 Melem/s 668.81 Melem/s]
 
-fast_counter/8   time:   [194.94 us 199.44 us 204.17 us]
-                        thrpt:  [160.49 Melem/s 164.30 Melem/s 168.10 Melem/s]
+fast_counter_stable/2   time:   [820.95 us 824.81 us 828.56 us]
+                        thrpt:  [1.2655 Gelem/s 1.2713 Gelem/s 1.2773 Gelem/s]
 
-fast_counter/16  time:   [152.30 us 155.98 us 159.92 us]
-                        thrpt:  [204.91 Melem/s 210.08 Melem/s 215.16 Melem/s]
+fast_counter_stable/4   time:   [429.10 us 430.62 us 432.17 us]
+                        thrpt:  [2.4263 Gelem/s 2.4350 Gelem/s 2.4437 Gelem/s]
+
+fast_counter_stable/8   time:   [240.59 us 242.92 us 245.44 us]
+                        thrpt:  [4.2723 Gelem/s 4.3165 Gelem/s 4.3583 Gelem/s]
+
+fast_counter_stable/16  time:   [206.01 us 210.24 us 214.74 us]
+                        thrpt:  [4.8829 Gelem/s 4.9875 Gelem/s 5.0900 Gelem/s]
 ```
 
 Big shoutout to @jimvdl who put the core starting point for this together

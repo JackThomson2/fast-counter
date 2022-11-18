@@ -1,6 +1,6 @@
 [package]
 name = "fast-counter"
-version = "0.0.2"
+version = "1.0.0"
 edition = "2021"
 description = "A sharded concurrent counter"
 license = "MIT OR Apache-2.0"
