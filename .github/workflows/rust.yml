@@ -20,9 +20,9 @@ jobs:
     steps:
     - uses: hecrj/setup-rust-action@v1
       with:
-        rust-version: nightly
+        rust-version: stable
     - uses: actions/checkout@v3
     - name: Build
-      run: cargo build --verbose --features nightly
+      run: cargo build --verbose 
     - name: Run tests
-      run: cargo test --verbose --features nightly
+      run: cargo test --verbose 

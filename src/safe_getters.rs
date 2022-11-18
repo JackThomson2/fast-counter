@@ -8,17 +8,6 @@ macro_rules! safe_get {
     };
 }
 
-macro_rules! debug_unwrap {
-    ($arr:expr) => {
-        if cfg!(not(debug_assertions)) {
-            $arr.unwrap_unchecked()
-        } else {
-            $arr.unwrap()
-        }
-    };
-}
-
-
 pub trait SafeGetters<T> {
     fn safely_get(&self, idx: usize) -> &T;
 }
