@@ -1,7 +1,7 @@
 use std::sync::atomic::AtomicIsize;
 
 /// Pads and aligns a value to the length of a cache line.
-/// Code borrowed from https://github.com/ibraheemdev/seize/blob/master/src/utils.rs
+/// Code borrowed from `https://github.com/ibraheemdev/seize/blob/master/src/utils.rs`
 #[cfg_attr(
     any(
         target_arch = "x86_64",
