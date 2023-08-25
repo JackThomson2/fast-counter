@@ -14,7 +14,7 @@ thread_local! {
 
 /// A sharded atomic counter
 ///
-/// `ConcurrentCounter` shards cacheline aligned AtomicIsizes across a vector for faster updates in
+/// `ConcurrentCounter` shards cacheline aligned `AtomicIsizes` across a vector for faster updates in
 /// a high contention scenarios.
 pub struct ConcurrentCounter {
     cells: Vec<CachePadded<AtomicIsize>>,
@@ -56,7 +56,7 @@ impl ConcurrentCounter {
     /// Adds the value to the counter, internally with is using `add_with_ordering` with a
     /// `Ordering::Relaxed` and is mainly for convenience.
     ///
-    /// `ConcurrentCounter` will identify a cell to add the `value` too with using a thread_local
+    /// `ConcurrentCounter` will identify a cell to add the `value` too with using a `thread_local`
     /// which will try to aleviate the contention on a single number
     ///
     /// # Examples
@@ -73,7 +73,7 @@ impl ConcurrentCounter {
         self.add_with_ordering(value, Ordering::Relaxed)
     }
 
-    /// `ConcurrentCounter` will identify a cell to add the `value` too with using a thread_local
+    /// `ConcurrentCounter` will identify a cell to add the `value` too with using a `thread_local`
     /// which will try to aleviate the contention on a single number. The cell will be updated
     /// atomically using the ordering provided in `ordering`
     ///
