@@ -1,4 +1,4 @@
-//! Fast-counter is a shareded concurrent atomic counter
+//! Fast-counter is a sharded concurrent atomic counter
 //!
 //! The library works by sharding the atomic numbers between multiple values, each thread will
 //! attempt to read from a different cell. This helps with cache-thrashing and contention. This
