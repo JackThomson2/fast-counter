@@ -1,5 +1,6 @@
 use std::cell::Cell;
 use std::fmt;
+use std::iter::repeat_with;
 use std::sync::atomic::{AtomicIsize, AtomicUsize, Ordering};
 
 use crate::safe_getters::SafeGetters;
@@ -43,7 +44,7 @@ impl ConcurrentCounter {
     pub fn new(count: usize) -> Self {
         let count = count.next_power_of_two();
         Self {
-            cells: (0..count).map(|_| make_new_padded_counter()).collect(),
+            cells: repeat_with(make_new_padded_counter).take(count).collect(),
         }
     }
 
