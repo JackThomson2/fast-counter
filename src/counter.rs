@@ -50,7 +50,7 @@ impl ConcurrentCounter {
 
     #[inline]
     fn thread_id(&self) -> usize {
-        THREAD_ID.with(|id| id.get())
+        THREAD_ID.with(Cell::get)
     }
 
     /// Adds the value to the counter, internally with is using `add_with_ordering` with a
