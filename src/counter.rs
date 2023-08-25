@@ -70,7 +70,7 @@ impl ConcurrentCounter {
     /// ```
     #[inline]
     pub fn add(&self, value: isize) {
-        self.add_with_ordering(value, Ordering::Relaxed)
+        self.add_with_ordering(value, Ordering::Relaxed);
     }
 
     /// `ConcurrentCounter` will identify a cell to add the `value` too with using a `thread_local`
