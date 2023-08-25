@@ -14,7 +14,7 @@ thread_local! {
 
 /// A sharded atomic counter
 ///
-/// ConcurrentCounter shards cacheline aligned AtomicIsizes across a vector for faster updates in
+/// `ConcurrentCounter` shards cacheline aligned AtomicIsizes across a vector for faster updates in
 /// a high contention scenarios.
 pub struct ConcurrentCounter {
     cells: Vec<CachePadded<AtomicIsize>>,
@@ -30,7 +30,7 @@ impl fmt::Debug for ConcurrentCounter {
 }
 
 impl ConcurrentCounter {
-    /// Creates a new ConcurrentCounter with a minimum of the `count` cells. Concurrent counter
+    /// Creates a new `ConcurrentCounter` with a minimum of the `count` cells. Concurrent counter
     /// will align the `count` to the next power of two for better speed when doing the modulus.
     ///
     /// # Examples
@@ -56,7 +56,7 @@ impl ConcurrentCounter {
     /// Adds the value to the counter, internally with is using `add_with_ordering` with a
     /// `Ordering::Relaxed` and is mainly for convenience.
     ///
-    /// ConcurrentCounter will identify a cell to add the `value` too with using a thread_local
+    /// `ConcurrentCounter` will identify a cell to add the `value` too with using a thread_local
     /// which will try to aleviate the contention on a single number
     ///
     /// # Examples
@@ -73,7 +73,7 @@ impl ConcurrentCounter {
         self.add_with_ordering(value, Ordering::Relaxed)
     }
 
-    /// ConcurrentCounter will identify a cell to add the `value` too with using a thread_local
+    /// `ConcurrentCounter` will identify a cell to add the `value` too with using a thread_local
     /// which will try to aleviate the contention on a single number. The cell will be updated
     /// atomically using the ordering provided in `ordering`
     ///
@@ -100,7 +100,7 @@ impl ConcurrentCounter {
     ///
     /// Due to the fact the cells are sharded and the concurrent nature of the library this sum
     /// may be slightly inaccurate. For example if used in a concurrent map and using
-    /// ConcurrentCounter to track the length, depending on the ordering the length may be returned
+    /// `ConcurrentCounter` to track the length, depending on the ordering the length may be returned
     /// as a negative value.
     ///
     /// # Examples
@@ -126,7 +126,7 @@ impl ConcurrentCounter {
     ///
     /// Due to the fact the cells are sharded and the concurrent nature of the library this sum
     /// may be slightly inaccurate. For example if used in a concurrent map and using
-    /// ConcurrentCounter to track the length, depending on the ordering the length may be returned
+    /// `ConcurrentCounter` to track the length, depending on the ordering the length may be returned
     /// as a negative value.
     ///
     /// # Examples
