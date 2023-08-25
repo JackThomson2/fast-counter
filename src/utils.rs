@@ -37,9 +37,8 @@ pub struct CachePadded<T> {
     pub value: T,
 }
 
-pub fn make_new_padded_counter() -> CachePadded::<AtomicIsize> {
+pub fn make_new_padded_counter() -> CachePadded<AtomicIsize> {
     CachePadded {
-        value: AtomicIsize::new(0)
+        value: AtomicIsize::new(0),
     }
 }
-

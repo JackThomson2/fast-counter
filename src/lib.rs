@@ -29,7 +29,7 @@
 //!
 //! The library will perform best when the threads are accessing their own cell consistently. This
 //! can helped by making sure more than enough cells are allocated for the number of threads which
-//! are going to be writing to the cell. 
+//! are going to be writing to the cell.
 //!
 //! Due to the sharding behaviour the time to call the `sum()` method does slow down with the
 //! increase in shards, if this becomes a bottleneck it may be worth investigating running with a

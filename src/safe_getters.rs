@@ -13,13 +13,13 @@ pub trait SafeGetters<T> {
 }
 
 impl<T> SafeGetters<T> for [T] {
-    fn safely_get(&self, idx:usize) -> &T {
+    fn safely_get(&self, idx: usize) -> &T {
         safe_get!(self, idx)
     }
 }
 
-impl <T, const C: usize> SafeGetters<T> for [T; C] {
-    fn safely_get(&self, idx:usize) -> &T {
+impl<T, const C: usize> SafeGetters<T> for [T; C] {
+    fn safely_get(&self, idx: usize) -> &T {
         safe_get!(self, idx)
     }
 }

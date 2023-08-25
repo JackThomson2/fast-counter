@@ -1,9 +1,9 @@
+use std::cell::Cell;
 use std::fmt;
 use std::sync::atomic::{AtomicIsize, AtomicUsize, Ordering};
-use std::cell::Cell;
 
-use crate::utils::{CachePadded, make_new_padded_counter};
 use crate::safe_getters::SafeGetters;
+use crate::utils::{make_new_padded_counter, CachePadded};
 
 static THREAD_COUNTER: AtomicUsize = AtomicUsize::new(1);
 
@@ -14,17 +14,17 @@ thread_local! {
 /// A sharded atomic counter
 ///
 /// ConcurrentCounter shards cacheline aligned AtomicIsizes across a vector for faster updates in
-/// a high contention scenarios. 
+/// a high contention scenarios.
 pub struct ConcurrentCounter {
-    cells: Vec<CachePadded::<AtomicIsize>>,
+    cells: Vec<CachePadded<AtomicIsize>>,
 }
 
 impl fmt::Debug for ConcurrentCounter {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("ConcurrentCounter")
-         .field("sum", &self.sum())
-         .field("cells", &self.cells.len())
-         .finish()
+            .field("sum", &self.sum())
+            .field("cells", &self.cells.len())
+            .finish()
     }
 }
 
@@ -32,7 +32,7 @@ impl ConcurrentCounter {
     /// Creates a new ConcurrentCounter with a minimum of the `count` cells. Concurrent counter
     /// will align the `count` to the next power of two for better speed when doing the modulus.
     ///
-    /// # Examples 
+    /// # Examples
     ///
     /// ```
     /// use fast_counter::ConcurrentCounter;
@@ -52,16 +52,14 @@ impl ConcurrentCounter {
 
     #[inline]
     fn thread_id(&self) -> usize {
-        THREAD_ID.with(|id| {
-            id.get()
-        })
+        THREAD_ID.with(|id| id.get())
     }
 
     /// Adds the value to the counter, internally with is using `add_with_ordering` with a
-    /// `Ordering::Relaxed` and is mainly for convenience. 
+    /// `Ordering::Relaxed` and is mainly for convenience.
     ///
     /// ConcurrentCounter will identify a cell to add the `value` too with using a thread_local
-    /// which will try to aleviate the contention on a single number 
+    /// which will try to aleviate the contention on a single number
     ///
     /// # Examples
     ///
@@ -93,7 +91,9 @@ impl ConcurrentCounter {
     /// ```
     #[inline]
     pub fn add_with_ordering(&self, value: isize, ordering: Ordering) {
-        let c = self.cells.safely_get(self.thread_id() & (self.cells.len() - 1));
+        let c = self
+            .cells
+            .safely_get(self.thread_id() & (self.cells.len() - 1));
         c.value.fetch_add(value, ordering);
     }
 
@@ -103,7 +103,7 @@ impl ConcurrentCounter {
     /// Due to the fact the cells are sharded and the concurrent nature of the library this sum
     /// may be slightly inaccurate. For example if used in a concurrent map and using
     /// ConcurrentCounter to track the length, depending on the ordering the length may be returned
-    /// as a negative value. 
+    /// as a negative value.
     ///
     /// # Examples
     ///
@@ -129,7 +129,7 @@ impl ConcurrentCounter {
     /// Due to the fact the cells are sharded and the concurrent nature of the library this sum
     /// may be slightly inaccurate. For example if used in a concurrent map and using
     /// ConcurrentCounter to track the length, depending on the ordering the length may be returned
-    /// as a negative value. 
+    /// as a negative value.
     ///
     /// # Examples
     ///
@@ -184,7 +184,6 @@ mod tests {
             }
         });
 
-
         assert_eq!(counter.sum(), 2);
     }
 
@@ -203,7 +202,6 @@ mod tests {
                 });
             }
         });
-
 
         assert_eq!(counter.sum(), 2 * WRITE_COUNT);
     }
@@ -225,7 +223,6 @@ mod tests {
             }
         });
 
-
         assert_eq!(counter.sum(), THREAD_COUNT * WRITE_COUNT);
     }
 
@@ -242,6 +239,9 @@ mod tests {
 
         assert_eq!(counter.sum(), WRITE_COUNT);
 
-        assert_eq!(format!("Counter is: {counter:?}"), "Counter is: ConcurrentCounter { sum: 1000000, cells: 8 }")
+        assert_eq!(
+            format!("Counter is: {counter:?}"),
+            "Counter is: ConcurrentCounter { sum: 1000000, cells: 8 }"
+        )
     }
 }
