@@ -9,7 +9,7 @@
 //!
 //! # Usage
 //!
-//! Usage of the library is simple, create a new ConcurrentCounter with then  number of shards you
+//! Usage of the library is simple, create a new ConcurrentCounter with then number of shards you
 //! wish to have, internally the library will use the next power of two as the number of cells for
 //! a faster modulus.
 //!
