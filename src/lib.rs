@@ -1,4 +1,4 @@
-//! Fast-counter is a shareded concurrent atomic counter
+//! Fast-counter is a sharded concurrent atomic counter
 //!
 //! The library works by sharding the atomic numbers between multiple values, each thread will
 //! attempt to read from a different cell. This helps with cache-thrashing and contention. This
@@ -9,7 +9,7 @@
 //!
 //! # Usage
 //!
-//! Usage of the library is simple, create a new ConcurrentCounter with then  number of shards you
+//! Usage of the library is simple, create a new `ConcurrentCounter` with then number of shards you
 //! wish to have, internally the library will use the next power of two as the number of cells for
 //! a faster modulus.
 //!
@@ -29,7 +29,7 @@
 //!
 //! The library will perform best when the threads are accessing their own cell consistently. This
 //! can helped by making sure more than enough cells are allocated for the number of threads which
-//! are going to be writing to the cell. 
+//! are going to be writing to the cell.
 //!
 //! Due to the sharding behaviour the time to call the `sum()` method does slow down with the
 //! increase in shards, if this becomes a bottleneck it may be worth investigating running with a

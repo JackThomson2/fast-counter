@@ -1,5 +1,4 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
-use rayon;
 use rayon::prelude::*;
 use std::sync::atomic::{AtomicIsize, Ordering};
 
@@ -64,9 +63,5 @@ fn fast_counter_stable(c: &mut Criterion) {
     }
 }
 
-criterion_group!(
-    benches,
-    atomic_counter,
-    fast_counter_stable,
-);
+criterion_group!(benches, atomic_counter, fast_counter_stable,);
 criterion_main!(benches);
