@@ -1,6 +1,6 @@
 # Fast Counter
 
-This is a simple shareded concurrent counter which can be used in higher contention scenearios for example for a counter in a HashMap. 
+This is a simple sharded concurrent counter which can be used in higher contention scenarios for example for a counter in a HashMap. 
 
 This approach appears to scale well to a higher number of cores as shown here compared to a single atomic number which is being updated:
 
